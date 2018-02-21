@@ -2,5 +2,7 @@
 simple site speed/health monitoring script
 
 depends on:
-  php-yaml module
-  apache benchmark (ab)
+
+php-yaml module
+
+apache benchmark (ab)
