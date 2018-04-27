@@ -29,7 +29,7 @@ foreach($conf['urls'] as $k => $val){
 	echo '<strong>'.$val.'</strong><br>';
 
 	if($code!='200'){
-		$mess = 'ALERT! SITE '.$val.' IS DOWN!';	
+		$mess = 'ALERT! SITE '.$val.' IS DOWN! code : '.$code;	
 		$critical=true;
 	}
 	else{
@@ -37,15 +37,15 @@ foreach($conf['urls'] as $k => $val){
 		if($time<100){
 			$mess = 'SITE '.$val.' IS AAA FAST: '.$time.' ms';
 		}
-		elseif($time<1000){
+		elseif($time<2000){
 			$mess = 'SITE '.$val.' IS OK FAST: '.$time.' ms';
 		}
 		elseif($time<10000){
-			$mess =  'ALERT! SITE '.$val.' GETTING SLOW: '.$time.' ms';
-			$critical=true;
+			$mess =  'NOTICE! SITE '.$val.' GETTING SLOW: '.$time.' ms';
+			//$critical=true;
 		}
 		else{
-			$mess = 'ALERT! SITE '.$val.' ALMOST DEAD: '.$time.' ms';	
+			$mess = 'WARNING! SITE '.$val.' ALMOST DEAD: '.$time.' ms';	
 			$critical=true;
 		}		
 	}	
