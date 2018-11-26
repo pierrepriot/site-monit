@@ -16,6 +16,7 @@ foreach($conf['urls'] as $k => $val){
 	$code='';
 	$time='';
 	$critical=false;
+  $fullReport='';
 
 	foreach($aRes as $idx => $line){			
 		if (preg_match('/LOG: Response code = ([0-9]{3})/msi', $line, $aMatches)){
@@ -24,33 +25,42 @@ foreach($conf['urls'] as $k => $val){
 		elseif (preg_match('/Time per request:       ([0-9\.]+) \[ms\] \(mean, across all concurrent requests\)/msi', $line, $aMatches)){
 			$time=(float)$aMatches[1];
 		}
+    elseif ($code==''  &&  preg_match('/WARNING: Response code not 2xx \(([0-9]{3})\)/msi', $line, $aMatches)){
+      $code=$aMatches[1];
+    }
+    $fullReport.=$line."\n";
 	}
 
 	echo '<strong>'.$val.'</strong><br>';
 
-	if($code!='200'){
-		$mess = 'ALERT! SITE '.$val.' IS DOWN! code : '.$code;	
+	if((int)$code>=400){
+		$subj = 'ALERT! SITE '.$val.' IS DOWN! code : '.$code;
+    $mess = $fullReport;
 		$critical=true;
 	}
 	else{
 		echo 'SITE IS UP<br>';
 		if($time<100){
-			$mess = 'SITE '.$val.' IS AAA FAST: '.$time.' ms';
+			$subj = 'SITE '.$val.' IS AAA FAST: '.$time.' ms';
+      $mess = $subj;
 		}
 		elseif($time<2000){
-			$mess = 'SITE '.$val.' IS OK FAST: '.$time.' ms';
+			$subj = 'SITE '.$val.' IS OK FAST: '.$time.' ms';
+      $mess = $subj;
 		}
 		elseif($time<10000){
-			$mess =  'NOTICE! SITE '.$val.' GETTING SLOW: '.$time.' ms';
+			$subj =  'NOTICE! SITE '.$val.' GETTING SLOW: '.$time.' ms';
+      $mess =  $subj;
 			//$critical=true;
 		}
 		else{
-			$mess = 'WARNING! SITE '.$val.' ALMOST DEAD: '.$time.' ms';	
+			$subj = 'WARNING! SITE '.$val.' ALMOST DEAD: '.$time.' ms';
+      $mess = $subj;
 			$critical=true;
 		}		
 	}	
-	echo $mess.'<br>';
+	echo $subj.'<br>';
 	if (isset($conf['email'])	&&	$critical==true){
-		mail($conf['email'], $mess, $mess);
+		mail($conf['email'], $subj, $mess);
 	}
 }
