@@ -30,10 +30,15 @@ foreach($conf['urls'] as $k => $val){
     }
     $fullReport.=$line."\n";
 	}
-
-	echo '<strong>'.$val.'</strong><br>';
-
-	if((int)$code>=400){
+  
+	echo '<br><strong>'.$val.'</strong><br>';
+  
+  if ($code==''){
+		$subj = 'ALERT! SITE '.$val.' IS DOWN! no response from http daemon';
+    $mess = $fullReport;
+		$critical=true;
+  }
+	elseif((int)$code>=400){
 		$subj = 'ALERT! SITE '.$val.' IS DOWN! code : '.$code;
     $mess = $fullReport;
 		$critical=true;
